@@ -18,9 +18,10 @@ type S3Client struct {
 }
 
 func NewS3Client() (*S3Client, error) {
-	endpoint := os.Getenv("ENDPOINT")     // ex. https://s3.ap-northeast-1.wasabisys.com or empty(default S3)
-	region := os.Getenv("ap-northeast-1") // ex. ap-northeast-1
-	creds := credentials.NewSharedCredentials("", "default")
+	endpoint := os.Getenv("endpoint") // ex. https://s3.ap-northeast-1.wasabisys.com or empty(default S3)
+	region := os.Getenv("region")     // ex. ap-northeast-1
+	credentialFilePath := os.Getenv("credential_filepath")
+	creds := credentials.NewSharedCredentials(credentialFilePath, "default")
 	sess, err := session.NewSession(&aws.Config{
 		Credentials: creds,
 		Region:      aws.String(region),
@@ -34,14 +35,14 @@ func NewS3Client() (*S3Client, error) {
 	return &S3Client{Svc: Svc, Sess: sess}, nil
 }
 
-func (s *S3Client) GetFileInfo(ctx context.Context, objInfo *model.ObjectInfo) (err error) {
+func (s *S3Client) GetFileInfo(ctx context.Context, bucketName string, key string) (objInfo model.ObjectInfo, err error) {
 	obj, err := s.Svc.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String(objInfo.BucketName),
-		Key:    aws.String(objInfo.Key),
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(key),
 	})
 
 	if err != nil {
-		return err
+		return model.ObjectInfo{}, err
 	}
 
 	if obj.LastModified != nil {
@@ -52,5 +53,5 @@ func (s *S3Client) GetFileInfo(ctx context.Context, objInfo *model.ObjectInfo) (
 	}
 
 	objInfo.LastUpdated = time.Now()
-	return nil
+	return objInfo, nil
 }

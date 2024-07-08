@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log/slog"
 
-	"github.com/s3-metrics-exporter/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -19,12 +17,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		lg, err := logger.NewLogger()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		lg.Info("start called")
+		slog.Info("start called")
 	},
 }
 
