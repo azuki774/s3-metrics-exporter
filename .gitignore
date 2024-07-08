@@ -1,2 +1,3 @@
 _test.sh
-deployment/credentials
+credentials
+config.toml

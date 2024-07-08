@@ -2,6 +2,7 @@ package main
 
 import (
 	"log/slog"
+	"os"
 
 	"github.com/s3-metrics-exporter/internal/client"
 	"github.com/s3-metrics-exporter/internal/service"
@@ -30,10 +31,11 @@ to quickly create a Cobra application.`,
 		slog.Info("create s3 client")
 
 		fetcher := service.Fetcher{
-			S3Client: s3client,
+			S3Client:   s3client,
+			ConfigFile: os.Getenv("configFile"), // 未設定なら ~/.aws/credentials が利用される
 		}
 
-		fetcher.Fetch()
+		err = fetcher.Fetch()
 		if err != nil {
 			slog.Error("failed to run fetcher", err)
 			return err

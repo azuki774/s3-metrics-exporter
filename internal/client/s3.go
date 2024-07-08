@@ -18,9 +18,9 @@ type S3Client struct {
 }
 
 func NewS3Client() (*S3Client, error) {
-	endpoint := os.Getenv("endpoint") // ex. https://s3.ap-northeast-1.wasabisys.com or empty(default S3)
-	region := os.Getenv("region")     // ex. ap-northeast-1
-	credentialFilePath := os.Getenv("credential_filepath")
+	endpoint := os.Getenv("endpoint")                 // ex. https://s3.ap-northeast-1.wasabisys.com or empty(default S3)
+	region := os.Getenv("region")                     // ex. ap-northeast-1
+	credentialFilePath := os.Getenv("credentialFile") // "" -> use ~/.aws/credentials
 	creds := credentials.NewSharedCredentials(credentialFilePath, "default")
 	sess, err := session.NewSession(&aws.Config{
 		Credentials: creds,
@@ -53,5 +53,10 @@ func (s *S3Client) GetFileInfo(ctx context.Context, bucketName string, key strin
 	}
 
 	objInfo.LastUpdated = time.Now()
+
+	// s3 からの応答には入っていないので手動でいれる
+	objInfo.BucketName = bucketName
+	objInfo.Key = key
+
 	return objInfo, nil
 }

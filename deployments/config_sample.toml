@@ -1,0 +1,5 @@
+[job1]
+JobKind    = "objectInfo" # 現状固定値
+BucketName = "" # バケット名
+Key        = "" # s3ストレージにおける、/hoge/fuga/a.txt のような形式のキー
+Interval   = 300 # 更新頻度（秒）
